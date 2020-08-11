@@ -127,7 +127,7 @@ class Pix2PixModel(torch.nn.Module):
         elif mode == "inference":
             with torch.no_grad():
                 if self.opt.use_ig:
-                    hair_mask = torch.unsqueeze(input_tag[:, 1, ...], 1)
+                    hair_mask = torch.unsqueeze(input_ref[:, 1, ...], 1)
                     (
                         inpainted_orient_rgb,
                         inpainted_orient_mask,

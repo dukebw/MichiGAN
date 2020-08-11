@@ -153,8 +153,7 @@ def single_inference_dataLoad(opt):
             hole_tensor = transform_label(hole) * 255.0
             hole_tensor = torch.unsqueeze(hole_tensor, 0)
         else:
-            hole_tensor = label_tag_tensor - orient_mask_tensor * label_tag_tensor
-
+            hole_tensor = label_ref_tensor - orient_mask_tensor * label_ref_tensor
     else:
         hole_tensor = torch.tensor(0)
 

@@ -115,7 +115,7 @@ class SPADEBGenerator(BaseNetwork):
 
     def forward(
         self,
-        input=None,
+        input_ref=None,
         z=None,
         orient_mask=None,
         image_ref=None,
@@ -123,7 +123,7 @@ class SPADEBGenerator(BaseNetwork):
         noise=None,
         image_tag=None,
     ):
-        seg = input_tag
+        seg = input_ref
 
         if self.opt.use_vae:
             # we sample z from unit normal and reshape the tensor
@@ -143,9 +143,8 @@ class SPADEBGenerator(BaseNetwork):
                 self.opt.Image_encoder_mode == "instance"
                 or self.opt.Image_encoder_mode == "partialconv"
             ):
-                ins_ref = torch.unsqueeze(input[:, 1, :, :], dim=1)
-                ins_tag = torch.unsqueeze(input_tag[:, 1, :, :], dim=1)
-                x = self.fc(image_ref, ins_ref, ins_tag)
+                ins_ref = torch.unsqueeze(input_ref[:, 1, :, :], dim=1)
+                x = self.fc(image_ref, ins_ref, ins_ref)
         else:
             # we downsample segmap (or image without hair) and run convolution
             x = F.interpolate(image_ref, size=(self.sh, self.sw))
@@ -173,7 +172,10 @@ class SPADEBGenerator(BaseNetwork):
         if not self.opt.noise_background:
             back_feats, back_masks = self.backgroud_enc(image_tag, input_tag)
         else:
-            back_feats, back_masks = self.backgroud_enc(image_tag, input_tag, noise)
+            union_mask = torch.zeros_like(input_ref)
+            union_mask[:, 1] = torch.max(input_ref[:, 1], input_tag[:, 1])
+            union_mask[:, 0] = 1 - union_mask[:, 1]
+            back_feats, back_masks = self.backgroud_enc(image_tag, union_mask, noise)
 
         hair_mask = torch.unsqueeze(input_tag[:, 1, :, :], dim=1)
         _, _, sh, sw = hair_mask.size()
