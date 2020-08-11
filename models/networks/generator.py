@@ -123,7 +123,11 @@ class SPADEBGenerator(BaseNetwork):
         noise=None,
         image_tag=None,
     ):
-        seg = input_tag
+        orient_binary_mask = torch.zeros_like(input_tag)
+        orient_binary_mask[:, 1] = orient_mask.sum(dim=1) != 0
+        orient_binary_mask[:, 0] = orient_mask.sum(dim=1) == 0
+        print((orient_binary_mask == input_tag).sum())
+        seg = orient_binary_mask
 
         if self.opt.use_vae:
             # we sample z from unit normal and reshape the tensor
@@ -173,9 +177,11 @@ class SPADEBGenerator(BaseNetwork):
         if not self.opt.noise_background:
             back_feats, back_masks = self.backgroud_enc(image_tag, input_tag)
         else:
-            back_feats, back_masks = self.backgroud_enc(image_tag, input_tag, noise)
+            back_feats, back_masks = self.backgroud_enc(
+                image_tag, orient_binary_mask, noise
+            )
 
-        hair_mask = torch.unsqueeze(input_tag[:, 1, :, :], dim=1)
+        hair_mask = torch.unsqueeze(orient_binary_mask[:, 1, :, :], dim=1)
         _, _, sh, sw = hair_mask.size()
         hair_mask1 = F.interpolate(
             hair_mask, size=(int(sh / 2), int(sw / 2)), mode="nearest"

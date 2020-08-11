@@ -137,25 +137,27 @@ def single_inference_dataLoad(opt):
     # rgb orientation maps
     if opt.use_ig and not opt.no_orientation:
         orient_tag_rgb = trans_orient_to_rgb(
-            np.array(orient_ref), np.array(label_tag), np.array(orient_mask)
+            np.array(orient_ref), np.array(orient_mask), np.array(orient_mask)
         )
         orient_rgb_tensor = transform_label(orient_tag_rgb)
         orient_rgb_tensor = torch.unsqueeze(orient_rgb_tensor, 0)
-        orient_rgb_tensor = orient_rgb_tensor * label_tag_tensor
+        orient_rgb_tensor = orient_rgb_tensor * orient_mask_tensor
     else:
+        assert False
         orient_rgb_tensor = torch.tensor(0)
 
     # hole mask
     if opt.use_ig:
         if opt.inference_orient_name == opt.inference_tag_name:
+            # assert False
             hole = np.array(label_tag)
             hole = generate_hole(hole, np.array(orient_mask))
             hole_tensor = transform_label(hole) * 255.0
             hole_tensor = torch.unsqueeze(hole_tensor, 0)
         else:
-            hole_tensor = label_tag_tensor - orient_mask_tensor * label_tag_tensor
-
+            hole_tensor = label_tag_tensor - (orient_mask_tensor * label_tag_tensor)
     else:
+        assert False
         hole_tensor = torch.tensor(0)
 
     # generate noise
