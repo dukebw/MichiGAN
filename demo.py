@@ -4,6 +4,7 @@ import cv2
 from ui.ui4 import Ui_Form
 from ui.mouse_event import GraphicsScene
 from ui_util.config import Config
+
 #
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -27,17 +28,39 @@ import numpy as np
 from scipy.misc import imresize
 from ui_util import cal_orient_stroke
 
-color_list = [QColor(0, 0, 0), QColor(255, 255, 255), QColor(76, 153, 0), QColor(204, 204, 0), QColor(51, 51, 255), QColor(204, 0, 204), QColor(0, 255, 255), QColor(51, 255, 255), QColor(102, 51, 0), QColor(255, 0, 0), QColor(102, 204, 0), QColor(255, 255, 0), QColor(0, 0, 153), QColor(0, 0, 204), QColor(255, 51, 153), QColor(0, 204, 204), QColor(0, 51, 0), QColor(255, 153, 51), QColor(0, 204, 0)]
+color_list = [
+    QColor(0, 0, 0),
+    QColor(255, 255, 255),
+    QColor(76, 153, 0),
+    QColor(204, 204, 0),
+    QColor(51, 51, 255),
+    QColor(204, 0, 204),
+    QColor(0, 255, 255),
+    QColor(51, 255, 255),
+    QColor(102, 51, 0),
+    QColor(255, 0, 0),
+    QColor(102, 204, 0),
+    QColor(255, 255, 0),
+    QColor(0, 0, 153),
+    QColor(0, 0, 204),
+    QColor(255, 51, 153),
+    QColor(0, 204, 204),
+    QColor(0, 51, 0),
+    QColor(255, 153, 51),
+    QColor(0, 204, 0),
+]
+
 
 def dliate_erode(img, kernel):
     er_k = kernel
     di_k = kernel
-    erode_kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(er_k, er_k))
-    dilate_kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(di_k, di_k))
+    erode_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (er_k, er_k))
+    dilate_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (di_k, di_k))
     img_f = cv2.dilate(img, dilate_kernel)
     img_f = cv2.erode(img_f, erode_kernel)
 
     return img_f
+
 
 class Ex(QWidget, Ui_Form):
     def __init__(self, model, opt):
@@ -106,17 +129,22 @@ class Ex(QWidget, Ui_Form):
         self.color = None
 
     def open_ref(self):
-        fileName, _ = QFileDialog.getOpenFileName(self, "Open File", self.opt.demo_data_dir)
+        fileName, _ = QFileDialog.getOpenFileName(
+            self, "Open File", self.opt.demo_data_dir
+        )
         if fileName:
-            image_name = fileName.split('/')[-1]
+            image_name = fileName.split("/")[-1]
             image = QPixmap(fileName)
             mat_img = Image.open(fileName)
             self.ref_img = mat_img.copy()
-            self.ref_mask_path = os.path.join(self.root_dir,'labels',image_name[:-4]+'.png')
+            self.ref_mask_path = os.path.join(
+                self.root_dir, "labels", image_name[:-4] + ".png"
+            )
 
             if image.isNull():
-                QMessageBox.information(self, "Image Viewer",
-                                        "Cannot load %s." % fileName)
+                QMessageBox.information(
+                    self, "Image Viewer", "Cannot load %s." % fileName
+                )
                 return
             image = image.scaled(self.graphicsView_5.size(), Qt.IgnoreAspectRatio)
 
@@ -128,13 +156,15 @@ class Ex(QWidget, Ui_Form):
             # self.result_scene.addPixmap(image)
 
     def open_tag(self):
-        fileName, _ = QFileDialog.getOpenFileName(self, "Open File", self.opt.demo_data_dir)
+        fileName, _ = QFileDialog.getOpenFileName(
+            self, "Open File", self.opt.demo_data_dir
+        )
         if fileName:
-            image_name = fileName.split('/')[-1]
+            image_name = fileName.split("/")[-1]
             image = QPixmap(fileName)
             mat_img = Image.open(fileName)
 
-            recon_dir = os.path.join(self.opt.demo_data_dir,'images_recon', image_name)
+            recon_dir = os.path.join(self.opt.demo_data_dir, "images_recon", image_name)
             if os.path.exists(recon_dir):
                 recon_img = Image.open(recon_dir)
                 self.recon_tag_img = recon_img.copy()
@@ -143,8 +173,9 @@ class Ex(QWidget, Ui_Form):
 
             self.tag_img = mat_img.copy()
             if image.isNull():
-                QMessageBox.information(self, "Image Viewer",
-                                        "Cannot load %s." % fileName)
+                QMessageBox.information(
+                    self, "Image Viewer", "Cannot load %s." % fileName
+                )
                 return
             image1 = image.scaled(self.graphicsView_4.size(), Qt.IgnoreAspectRatio)
 
@@ -157,16 +188,19 @@ class Ex(QWidget, Ui_Form):
             self.result_scene.addPixmap(image2)
 
             # process mask and orient by default
-            mat_mask = cv2.imread(os.path.join(self.root_dir,'labels', image_name[:-4]+'.png'))
+            mat_mask = cv2.imread(
+                os.path.join(self.root_dir, "labels", image_name[:-4] + ".png")
+            )
 
-            self.mask = mat_mask.copy() # original mask
-            self.mask_m = mat_mask # edited mask
+            self.mask = mat_mask.copy()  # original mask
+            self.mask_m = mat_mask  # edited mask
             mat_mask = mat_mask.copy()
-            mask= QImage(mat_mask, self.img_size, self.img_size, QImage.Format_RGB888)
+            mask = QImage(mat_mask, self.img_size, self.img_size, QImage.Format_RGB888)
 
             if mask.isNull():
-                QMessageBox.information(self, "Image Viewer",
-                                        "Cannot load %s." % fileName)
+                QMessageBox.information(
+                    self, "Image Viewer", "Cannot load %s." % fileName
+                )
                 return
 
             for i in range(self.img_size):
@@ -176,16 +210,28 @@ class Ex(QWidget, Ui_Form):
 
             pixmap = QPixmap()
             pixmap.convertFromImage(mask)
-            self.mask_show = pixmap.scaled(self.graphicsView.size(), Qt.IgnoreAspectRatio)
+            self.mask_show = pixmap.scaled(
+                self.graphicsView.size(), Qt.IgnoreAspectRatio
+            )
             self.scene.reset()
             if len(self.scene.items()) > 0:
                 self.scene.reset_items()
             self.scene.addPixmap(self.mask_show)
 
             # for orient
-            mat_img = cv2.imread(os.path.join(self.root_dir,'orients',image_name[:-4]+'_orient_dense.png'), cv2.IMREAD_GRAYSCALE)
-            orient_mask = cv2.imread(os.path.join(self.root_dir, 'labels',image_name[:-4]+'.png'), cv2.IMREAD_GRAYSCALE)
-            self.orient_image = Image.open(os.path.join(self.root_dir, 'images',image_name[:-4]+'.jpg'))
+            mat_img = cv2.imread(
+                os.path.join(
+                    self.root_dir, "orients", image_name[:-4] + "_orient_dense.png"
+                ),
+                cv2.IMREAD_GRAYSCALE,
+            )
+            orient_mask = cv2.imread(
+                os.path.join(self.root_dir, "labels", image_name[:-4] + ".png"),
+                cv2.IMREAD_GRAYSCALE,
+            )
+            self.orient_image = Image.open(
+                os.path.join(self.root_dir, "images", image_name[:-4] + ".jpg")
+            )
 
             self.orient = mat_img.copy()
             self.orient_m = mat_img
@@ -199,29 +245,44 @@ class Ex(QWidget, Ui_Form):
             orient_rgb[..., 2] = 0.5
             orient_rgb *= orient_mask[..., np.newaxis]
             orient_rgb = np.uint8(orient_rgb * 255.0)
-            image = QImage(orient_rgb, self.img_size, self.img_size,self.img_size*3, QImage.Format_RGB888)
+            image = QImage(
+                orient_rgb,
+                self.img_size,
+                self.img_size,
+                self.img_size * 3,
+                QImage.Format_RGB888,
+            )
 
             if image.isNull():
-                QMessageBox.information(self, "Image Viewer",
-                                        "Cannot load %s." % fileName)
+                QMessageBox.information(
+                    self, "Image Viewer", "Cannot load %s." % fileName
+                )
                 return
 
             pixmap = QPixmap()
             pixmap.convertFromImage(image)
-            self.orient_show = pixmap.scaled(self.graphicsView_2.size(), Qt.IgnoreAspectRatio)
+            self.orient_show = pixmap.scaled(
+                self.graphicsView_2.size(), Qt.IgnoreAspectRatio
+            )
             self.orient_scene.reset()
             if len(self.orient_scene.items()) > 0:
                 self.orient_scene.reset_items()
             self.orient_scene.addPixmap(self.orient_show)
 
-
     def open_orient(self):
-        fileName, _ = QFileDialog.getOpenFileName(self, "Open File",self.opt.demo_data_dir)
+        fileName, _ = QFileDialog.getOpenFileName(
+            self, "Open File", self.opt.demo_data_dir
+        )
         if fileName:
-            image_name = fileName.split('/')[-1]
+            image_name = fileName.split("/")[-1]
             mat_img = cv2.imread(fileName, cv2.IMREAD_GRAYSCALE)
-            orient_mask = cv2.imread(os.path.join(self.root_dir, 'labels',image_name[:-17]+'.png'), cv2.IMREAD_GRAYSCALE)
-            self.orient_image = Image.open(os.path.join(self.root_dir, 'images', image_name[:-17] + '.jpg'))
+            orient_mask = cv2.imread(
+                os.path.join(self.root_dir, "labels", image_name[:-17] + ".png"),
+                cv2.IMREAD_GRAYSCALE,
+            )
+            self.orient_image = Image.open(
+                os.path.join(self.root_dir, "images", image_name[:-17] + ".jpg")
+            )
             # mat_img = imresize(mat_img, (self.img_size, self.img_size), interp='nearest')
 
             # mat_img = Image.open(fileName)
@@ -245,23 +306,34 @@ class Ex(QWidget, Ui_Form):
             orient_rgb = np.uint8(orient_rgb * 255.0)
             # orient_save = Image.fromarray(np.uint8(orient_rgb)).convert('RGB')
             # orient_save.save('./inference_samples/original_orient.png')
-            image = QImage(orient_rgb, self.img_size, self.img_size,self.img_size*3, QImage.Format_RGB888)
+            image = QImage(
+                orient_rgb,
+                self.img_size,
+                self.img_size,
+                self.img_size * 3,
+                QImage.Format_RGB888,
+            )
 
             if image.isNull():
-                QMessageBox.information(self, "Image Viewer",
-                                        "Cannot load %s." % fileName)
+                QMessageBox.information(
+                    self, "Image Viewer", "Cannot load %s." % fileName
+                )
                 return
 
             pixmap = QPixmap()
             pixmap.convertFromImage(image)
-            self.orient_show = pixmap.scaled(self.graphicsView_2.size(), Qt.IgnoreAspectRatio)
+            self.orient_show = pixmap.scaled(
+                self.graphicsView_2.size(), Qt.IgnoreAspectRatio
+            )
             self.orient_scene.reset()
             if len(self.orient_scene.items()) > 0:
                 self.orient_scene.reset_items()
             self.orient_scene.addPixmap(self.orient_show)
 
     def open_mask(self):
-        fileName, _ = QFileDialog.getOpenFileName(self, "Open File",self.opt.demo_data_dir)
+        fileName, _ = QFileDialog.getOpenFileName(
+            self, "Open File", self.opt.demo_data_dir
+        )
         if fileName:
             mat_img = cv2.imread(fileName)
             # mat_img = imresize(mat_img, (self.img_size, self.img_size), interp='nearest')
@@ -269,14 +341,15 @@ class Ex(QWidget, Ui_Form):
             # mat_img = Image.open(fileName)
             # mat_img = np.array(mat_img.resize((self.size,self.size)))
 
-            self.mask = mat_img.copy() # original mask
-            self.mask_m = mat_img # edited mask
+            self.mask = mat_img.copy()  # original mask
+            self.mask_m = mat_img  # edited mask
             mat_img = mat_img.copy()
             image = QImage(mat_img, self.img_size, self.img_size, QImage.Format_RGB888)
 
             if image.isNull():
-                QMessageBox.information(self, "Image Viewer",
-                                        "Cannot load %s." % fileName)
+                QMessageBox.information(
+                    self, "Image Viewer", "Cannot load %s." % fileName
+                )
                 return
 
             for i in range(self.img_size):
@@ -286,7 +359,9 @@ class Ex(QWidget, Ui_Form):
 
             pixmap = QPixmap()
             pixmap.convertFromImage(image)
-            self.mask_show = pixmap.scaled(self.graphicsView.size(), Qt.IgnoreAspectRatio)
+            self.mask_show = pixmap.scaled(
+                self.graphicsView.size(), Qt.IgnoreAspectRatio
+            )
             self.scene.reset()
             if len(self.scene.items()) > 0:
                 self.scene.reset_items()
@@ -306,64 +381,106 @@ class Ex(QWidget, Ui_Form):
         if self.scene.size > 1:
             self.scene.size -= 1
 
-
     def edit(self):
         # get the edited mask
         self.mask_m = self.mask.copy()
         for i in range(2):
-            self.mask_m = self.make_mask(self.mask_m, self.scene.mask_points[i], self.scene.size_points[i], i)
+            self.mask_m = self.make_mask(
+                self.mask_m, self.scene.mask_points[i], self.scene.size_points[i], i
+            )
 
         # get the edited orient
         orient_new = self.mask_m.copy()
-        orient_new = self.make_mask(orient_new, self.scene.mask_points[2], self.scene.size_points[2], 2)
+        orient_new = self.make_mask(
+            orient_new, self.scene.mask_points[2], self.scene.size_points[2], 2
+        )
         vis_stroke = orient_new.copy()
         orient_new[orient_new == 1] = 0
         orient_new[orient_new == 2] = 1
-        mask_stroke = orient_new.copy()[:,:,0]
-        dilate_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(50, 50))
-        mask_hole = cv2.dilate(np.uint8(orient_new), dilate_kernel)[:,:,0]
+        mask_stroke = orient_new.copy()[:, :, 0]
+        dilate_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (50, 50))
+        mask_hole = cv2.dilate(np.uint8(orient_new), dilate_kernel)[:, :, 0]
         cal_stroke_orient = cal_orient_stroke.orient()
         orient_stroke = cal_stroke_orient.stroke_to_orient(mask_stroke)
 
         # process the tag image
         ranges = np.unique(self.mask - self.mask_m)
-        if not self.clickButtion1.isChecked() and self.recon_tag_img is not None and 1 in ranges:
+        if (
+            not self.clickButtion1.isChecked()
+            and self.recon_tag_img is not None
+            and 1 in ranges
+        ):
             tag_image = self.recon_tag_img.copy()
         else:
             tag_image = self.tag_img.copy()
 
-
         if self.clickButtion1.isChecked():
             # reference mask
-            print('select Reference Mask')
+            print("select Reference Mask")
             if self.clickButtion3.isChecked():
                 # reference orient
-                print('select Reference Orientation')
-                self.model.opt.inpaint_mode = 'ref'
-                data = demo_inference_dataLoad(self.opt, self.ref_mask_path, self.mask[:, :, 0], self.orient_mask.copy(), self.orient, self.ref_img, tag_image)
+                print("select Reference Orientation")
+                self.model.opt.inpaint_mode = "ref"
+                data = demo_inference_dataLoad(
+                    self.opt,
+                    self.ref_mask_path,
+                    self.mask[:, :, 0],
+                    self.orient_mask.copy(),
+                    self.orient,
+                    self.ref_img,
+                    tag_image,
+                )
             else:
-                print('select Edited Orientation')
-                self.model.opt.inpaint_mode = 'stroke'
-                data = demo_inference_dataLoad(self.opt, self.ref_mask_path, self.mask[:, :, 0],
-                                               self.orient_mask.copy(), self.orient, self.ref_img, tag_image,orient_stroke, mask_stroke, mask_hole)
+                print("select Edited Orientation")
+                self.model.opt.inpaint_mode = "stroke"
+                data = demo_inference_dataLoad(
+                    self.opt,
+                    self.ref_mask_path,
+                    self.mask[:, :, 0],
+                    self.orient_mask.copy(),
+                    self.orient,
+                    self.ref_img,
+                    tag_image,
+                    orient_stroke,
+                    mask_stroke,
+                    mask_hole,
+                )
         else:
             # Edited mask
-            print('select Edited Mask')
+            print("select Edited Mask")
             if self.clickButtion3.isChecked():
                 # reference orient
-                print('select Reference Orientation')
-                self.model.opt.inpaint_mode = 'ref'
-                data = demo_inference_dataLoad(self.opt, self.ref_mask_path, self.mask_m[:,:,0], self.orient_mask.copy(), self.orient, self.ref_img, tag_image)
+                print("select Reference Orientation")
+                self.model.opt.inpaint_mode = "ref"
+                data = demo_inference_dataLoad(
+                    self.opt,
+                    self.ref_mask_path,
+                    self.mask_m[:, :, 0],
+                    self.orient_mask.copy(),
+                    self.orient,
+                    self.ref_img,
+                    tag_image,
+                )
             else:
-                print('select Edited Orientation')
-                self.model.opt.inpaint_mode = 'stroke'
-                data = demo_inference_dataLoad(self.opt, self.ref_mask_path, self.mask_m[:, :, 0],
-                                               self.orient_mask.copy(), self.orient, self.ref_img, tag_image,orient_stroke, mask_stroke, mask_hole)
+                print("select Edited Orientation")
+                self.model.opt.inpaint_mode = "stroke"
+                data = demo_inference_dataLoad(
+                    self.opt,
+                    self.ref_mask_path,
+                    self.mask_m[:, :, 0],
+                    self.orient_mask.copy(),
+                    self.orient,
+                    self.ref_img,
+                    tag_image,
+                    orient_stroke,
+                    mask_stroke,
+                    mask_hole,
+                )
 
         start_t = time.time()
-        generated, new_orient_rgb = self.model(data, mode='demo_inference')
+        generated, new_orient_rgb = self.model(data, mode="demo_inference")
         end_t = time.time()
-        print('inference time : {}'.format(end_t - start_t))
+        print("inference time : {}".format(end_t - start_t))
 
         # # save_image((generated.data[0] + 1) / 2,'./results/1.jpg')
         # result = tensor2im(generated[0])
@@ -371,27 +488,40 @@ class Ex(QWidget, Ui_Form):
         # fake_image.save('./inference_samples/inpaint_fake_image.jpg')
         if self.opt.add_feat_zeros:
             th = self.opt.add_th
-            tmp = generated[:,:,int(th/2):int(th/2)+self.opt.crop_size, int(th/2):int(th/2)+self.opt.crop_size]
+            tmp = generated[
+                :,
+                :,
+                int(th / 2) : int(th / 2) + self.opt.crop_size,
+                int(th / 2) : int(th / 2) + self.opt.crop_size,
+            ]
             generated = tmp
         result = generated.permute(0, 2, 3, 1)
         result = result.cpu().numpy()
         result = (result + 1) * 127.5
-        result = np.asarray(result[0,:,:,:], dtype=np.uint8)
+        result = np.asarray(result[0, :, :, :], dtype=np.uint8)
         # update the self.save_datas
-        self.save_datas['result'] = Image.fromarray(result.copy())
-        self.save_datas['ref_img'] = self.ref_img.copy()
-        self.save_datas['tag_img'] = self.tag_img.copy()
-        self.save_datas['ori_img'] = self.orient_image.copy()
-        vis_stroke[vis_stroke==1] = 255
+        self.save_datas["result"] = Image.fromarray(result.copy())
+        self.save_datas["ref_img"] = self.ref_img.copy()
+        self.save_datas["tag_img"] = self.tag_img.copy()
+        self.save_datas["ori_img"] = self.orient_image.copy()
+        vis_stroke[vis_stroke == 1] = 255
         vis_stroke[vis_stroke == 2] = 127
         # save
         # stroke_save = Image.fromarray(np.uint8(vis_stroke))
         # stroke_save.save('inference_samples/stroke_mask.png')
 
-        self.save_datas['stroke'] = Image.fromarray(np.uint8(vis_stroke))
-        self.save_datas['mask'] = Image.fromarray(np.uint8(self.mask_m[:, :, 0].copy()*255))
+        self.save_datas["stroke"] = Image.fromarray(np.uint8(vis_stroke))
+        self.save_datas["mask"] = Image.fromarray(
+            np.uint8(self.mask_m[:, :, 0].copy() * 255)
+        )
 
-        qim = QImage(result.data, result.shape[1], result.shape[0], result.shape[0] * 3, QImage.Format_RGB888)
+        qim = QImage(
+            result.data,
+            result.shape[1],
+            result.shape[0],
+            result.shape[0] * 3,
+            QImage.Format_RGB888,
+        )
         pixmap = QPixmap()
         pixmap.convertFromImage(qim)
         image = pixmap.scaled(self.graphicsView_3.size(), Qt.IgnoreAspectRatio)
@@ -414,31 +544,34 @@ class Ex(QWidget, Ui_Form):
 
     def save(self):
         # for save all results
-        print('save..')
+        print("save..")
 
-        fileName, _ = QFileDialog.getSaveFileName(self, "Save File",
-                                                  self.save_dir)
-        sum = Image.new(self.save_datas['result'].mode, (5 * self.opt.crop_size, self.opt.crop_size))
-        sum.paste(self.save_datas['stroke'], box=(3*self.opt.crop_size, 0))
+        fileName, _ = QFileDialog.getSaveFileName(self, "Save File", self.save_dir)
+        sum = Image.new(
+            self.save_datas["result"].mode, (5 * self.opt.crop_size, self.opt.crop_size)
+        )
+        sum.paste(self.save_datas["stroke"], box=(3 * self.opt.crop_size, 0))
         # sum.paste(self.save_datas['mask'], box=(self.opt.crop_size, 0))
-        sum.paste(self.save_datas['tag_img'], box=(0, 0))
-        sum.paste(self.save_datas['ref_img'], box=(self.opt.crop_size,0))
-        sum.paste(self.save_datas['ori_img'], box=(2*self.opt.crop_size,0))
-        sum.paste(self.save_datas['result'], box=(4*self.opt.crop_size, 0))
-        sum.save(fileName+'.jpg')
-
+        sum.paste(self.save_datas["tag_img"], box=(0, 0))
+        sum.paste(self.save_datas["ref_img"], box=(self.opt.crop_size, 0))
+        sum.paste(self.save_datas["ori_img"], box=(2 * self.opt.crop_size, 0))
+        sum.paste(self.save_datas["result"], box=(4 * self.opt.crop_size, 0))
+        sum.save(fileName + ".jpg")
 
     def make_mask(self, mask, pts, sizes, color):
         if len(pts) > 0:
             for idx, pt in enumerate(pts):
-                cv2.line(mask, pt['prev'], pt['curr'], (color, color, color), sizes[idx])
+                cv2.line(
+                    mask, pt["prev"], pt["curr"], (color, color, color), sizes[idx]
+                )
         return mask
 
     def save_img(self):
         if type(self.output_img):
-            fileName, _ = QFileDialog.getSaveFileName(self, "Save File",
-                                                      QDir.currentPath())
-            cv2.imwrite(fileName + '.jpg', self.output_img)
+            fileName, _ = QFileDialog.getSaveFileName(
+                self, "Save File", QDir.currentPath()
+            )
+            cv2.imwrite(fileName + ".jpg", self.output_img)
 
     def undo(self):
         self.scene.undo()
@@ -455,20 +588,24 @@ class Ex(QWidget, Ui_Form):
         if np.max(input) > 1:
             img = Image.fromarray(np.uint8(input))
         else:
-            img = Image.fromarray(np.uint8(input*255))
-        img.save('./inference_samples/'+name)
+            img = Image.fromarray(np.uint8(input * 255))
+        img.save("./inference_samples/" + name)
 
     def orient_edit(self):
         # get the new mask
         for i in range(2):
-            self.mask_m = self.make_mask(self.mask_m, self.scene.mask_points[i], self.scene.size_points[i], i)
+            self.mask_m = self.make_mask(
+                self.mask_m, self.scene.mask_points[i], self.scene.size_points[i], i
+            )
         # get the edited orient
         orient_new = self.mask_m
-        orient_new = self.make_mask(orient_new, self.scene.mask_points[2], self.scene.size_points[2], 2)
+        orient_new = self.make_mask(
+            orient_new, self.scene.mask_points[2], self.scene.size_points[2], 2
+        )
         orient_new[orient_new == 1] = 0
         orient_new[orient_new == 2] = 1
         # self.save_orient_edit(orient_new[...,0],'edited_orient.jpg')
-        dilate_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(20, 20))
+        dilate_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (20, 20))
         orient_new = cv2.dilate(np.uint8(orient_new), dilate_kernel)
         print(np.unique(orient_new))
         # self.save_orient_edit(orient_new[...,0], 'Gauss_edited_orient.jpg')
@@ -507,17 +644,18 @@ class Ex(QWidget, Ui_Form):
 
     def selectM(self):
         if self.clickButtion1.isChecked():
-            print('select Reference Mask')
+            print("select Reference Mask")
         elif self.clickButtion2.isChecked():
-            print('select Edited Mask')
+            print("select Edited Mask")
 
     def selectO(self):
         if self.clickButtion3.isChecked():
-            print('select Reference Orient')
+            print("select Reference Orient")
         elif self.clickButtion4.isChecked():
-            print('select Edited Orient')
+            print("select Edited Orient")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     opt = DemoOptions().parse()
     model = Pix2PixModel(opt)
     model.eval()

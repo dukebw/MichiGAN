@@ -11,14 +11,14 @@ import os
 
 class HTML:
     def __init__(self, web_dir, title, refresh=0):
-        if web_dir.endswith('.html'):
+        if web_dir.endswith(".html"):
             web_dir, html_name = os.path.split(web_dir)
         else:
-            web_dir, html_name = web_dir, 'index.html'
+            web_dir, html_name = web_dir, "index.html"
         self.title = title
         self.web_dir = web_dir
         self.html_name = html_name
-        self.img_dir = os.path.join(self.web_dir, 'images')
+        self.img_dir = os.path.join(self.web_dir, "images")
         if len(self.web_dir) > 0 and not os.path.exists(self.web_dir):
             os.makedirs(self.web_dir)
         if len(self.web_dir) > 0 and not os.path.exists(self.img_dir):
@@ -47,30 +47,35 @@ class HTML:
         with self.t:
             with tr():
                 for im, txt, link in zip(ims, txts, links):
-                    with td(style="word-wrap: break-word;", halign="center", valign="top"):
+                    with td(
+                        style="word-wrap: break-word;", halign="center", valign="top"
+                    ):
                         with p():
-                            with a(href=os.path.join('images', link)):
-                                img(style="width:%dpx" % (width), src=os.path.join('images', im))
+                            with a(href=os.path.join("images", link)):
+                                img(
+                                    style="width:%dpx" % (width),
+                                    src=os.path.join("images", im),
+                                )
                             br()
-                            p(txt.encode('utf-8'))
+                            p(txt.encode("utf-8"))
 
     def save(self):
         html_file = os.path.join(self.web_dir, self.html_name)
-        f = open(html_file, 'wt')
+        f = open(html_file, "wt")
         f.write(self.doc.render())
         f.close()
 
 
-if __name__ == '__main__':
-    html = HTML('web/', 'test_html')
-    html.add_header('hello world')
+if __name__ == "__main__":
+    html = HTML("web/", "test_html")
+    html.add_header("hello world")
 
     ims = []
     txts = []
     links = []
     for n in range(4):
-        ims.append('image_%d.jpg' % n)
-        txts.append('text_%d' % n)
-        links.append('image_%d.jpg' % n)
+        ims.append("image_%d.jpg" % n)
+        txts.append("text_%d" % n)
+        links.append("image_%d.jpg" % n)
     html.add_images(ims, txts, links)
     html.save()

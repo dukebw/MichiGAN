@@ -48,18 +48,17 @@ class GUIButton(QWidget):
         self.pushButton_10.clicked.connect(Form.increase)
         self.pushButton_11.clicked.connect(Form.decrease)
 
-
         self.grid1 = QGridLayout()
         self.setLayout(self.grid)
         self.resize(60, 100)
-        self.grid1.addWidget(self.pushButton_2, 0,0,1,1)
+        self.grid1.addWidget(self.pushButton_2, 0, 0, 1, 1)
         self.grid1.addWidget(self.pushButton_3, 1, 0, 1, 1)
         self.grid1.addWidget(self.pushButton_4, 1, 0, 1, 1)
         self.grid1.addWidget(self.pushButton_5, 1, 1, 1, 1)
 
 
-if __name__=="__main__":
-    app=QApplication(sys.argv)
-    win=GUIButton()
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    win = GUIButton()
     win.show()
     sys.exit(app.exec_())

@@ -18,7 +18,7 @@ class CustomDataset(Pix2pixDataset):
     @staticmethod
     def modify_commandline_options(parser, is_train):
         parser = Pix2pixDataset.modify_commandline_options(parser, is_train)
-        parser.set_defaults(preprocess_mode='resize_and_crop')
+        parser.set_defaults(preprocess_mode="resize_and_crop")
         # parser.set_defaults(load_size=load_size)
         # parser.set_defaults(crop_size=256)
         # parser.set_defaults(display_winsize=256)
@@ -27,25 +27,45 @@ class CustomDataset(Pix2pixDataset):
 
         # parser.add_argument('--data_dir', type=str, default='/mnt/lvdisk1/tzt/HairSynthesis/SPADE-master/datasets/FFHQ',
         #                     help='path to the directory that contains training & val data')
-        parser.add_argument('--label_dir', type=str, default='train_labels',
-                            help='path to the directory that contains label images')
-        parser.add_argument('--image_dir', type=str, default='train_images',
-                            help='path to the directory that contains photo images')
-        parser.add_argument('--instance_dir', type=str, default='',
-                            help='path to the directory that contains instance maps. Leave black if not exists')
-        parser.add_argument('--orient_dir', type=str, default='train_dense_orients',
-                            help='path to the directory that contains orientation mask')
-        parser.add_argument('--clear', type=str, default='',
-                            help='[ |clear_], clear_ means use the selected training data')
+        parser.add_argument(
+            "--label_dir",
+            type=str,
+            default="train_labels",
+            help="path to the directory that contains label images",
+        )
+        parser.add_argument(
+            "--image_dir",
+            type=str,
+            default="train_images",
+            help="path to the directory that contains photo images",
+        )
+        parser.add_argument(
+            "--instance_dir",
+            type=str,
+            default="",
+            help="path to the directory that contains instance maps. Leave black if not exists",
+        )
+        parser.add_argument(
+            "--orient_dir",
+            type=str,
+            default="train_dense_orients",
+            help="path to the directory that contains orientation mask",
+        )
+        parser.add_argument(
+            "--clear",
+            type=str,
+            default="",
+            help="[ |clear_], clear_ means use the selected training data",
+        )
 
         return parser
 
     def get_paths(self, opt):
 
         # combine data_dir and others
-        label_dir = os.path.join(opt.data_dir, opt.clear+opt.label_dir)
-        image_dir = os.path.join(opt.data_dir, opt.clear+opt.image_dir)
-        orient_dir = os.path.join(opt.data_dir, opt.clear+opt.orient_dir)
+        label_dir = os.path.join(opt.data_dir, opt.clear + opt.label_dir)
+        image_dir = os.path.join(opt.data_dir, opt.clear + opt.image_dir)
+        orient_dir = os.path.join(opt.data_dir, opt.clear + opt.orient_dir)
 
         # label_dir = opt.label_dir
         label_paths = make_dataset(label_dir, recursive=False, read_cache=True)
@@ -55,7 +75,9 @@ class CustomDataset(Pix2pixDataset):
 
         if len(opt.instance_dir) > 0:
             instance_dir = opt.instance_dir
-            instance_paths = make_dataset(instance_dir, recursive=False, read_cache=True)
+            instance_paths = make_dataset(
+                instance_dir, recursive=False, read_cache=True
+            )
         else:
             instance_paths = []
 
@@ -65,6 +87,8 @@ class CustomDataset(Pix2pixDataset):
         else:
             orient_paths = []
 
-        assert len(label_paths) == len(image_paths), "The #images in %s and %s do not match. Is there something wrong?"
+        assert len(label_paths) == len(
+            image_paths
+        ), "The #images in %s and %s do not match. Is there something wrong?"
 
         return label_paths, image_paths, instance_paths, orient_paths

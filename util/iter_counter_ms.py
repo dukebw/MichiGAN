@@ -9,23 +9,31 @@ import numpy as np
 
 
 # Helper class that keeps track of training iterations
-class IterationCounter():
+class IterationCounter:
     def __init__(self, opt):
         self.opt = opt
 
         self.first_epoch = 1
-        self.total_epochs = opt.niter + opt.niter_decay # 50
+        self.total_epochs = opt.niter + opt.niter_decay  # 50
         self.epoch_iter = 0  # iter number within each epoch
         self.total_steps_so_far = 0
-        self.iter_record_path = os.path.join(self.opt.checkpoints_dir, self.opt.name, 'iter.txt')
+        self.iter_record_path = os.path.join(
+            self.opt.checkpoints_dir, self.opt.name, "iter.txt"
+        )
         if opt.isTrain and opt.continue_train:
             try:
                 self.first_epoch, self.epoch_iter, self.total_steps_so_far = np.loadtxt(
-                    self.iter_record_path, delimiter=',', dtype=int)
-                print('Resuming from epoch %d at iteration %d' % (self.first_epoch, self.epoch_iter))
+                    self.iter_record_path, delimiter=",", dtype=int
+                )
+                print(
+                    "Resuming from epoch %d at iteration %d"
+                    % (self.first_epoch, self.epoch_iter)
+                )
             except:
-                print('Could not load iteration record at %s. Starting from beginning.' %
-                      self.iter_record_path)
+                print(
+                    "Could not load iteration record at %s. Starting from beginning."
+                    % self.iter_record_path
+                )
 
     # return the iterator of epochs for the training
     def training_epochs(self):
@@ -51,20 +59,32 @@ class IterationCounter():
     def record_epoch_end(self):
         current_time = time.time()
         self.time_per_epoch = current_time - self.epoch_start_time
-        print('End of epoch %d / %d \t Time Taken: %d sec' %
-              (self.current_epoch, self.total_epochs, self.time_per_epoch))
+        print(
+            "End of epoch %d / %d \t Time Taken: %d sec"
+            % (self.current_epoch, self.total_epochs, self.time_per_epoch)
+        )
         if self.current_epoch % self.opt.save_epoch_freq == 0:
-            np.savetxt(self.iter_record_path, (self.current_epoch + 1, 0, self.total_steps_so_far),
-                       delimiter=',', fmt='%d')
-            print('Saved current iteration count at %s.' % self.iter_record_path)
+            np.savetxt(
+                self.iter_record_path,
+                (self.current_epoch + 1, 0, self.total_steps_so_far),
+                delimiter=",",
+                fmt="%d",
+            )
+            print("Saved current iteration count at %s." % self.iter_record_path)
 
     def record_current_iter(self):
-        np.savetxt(self.iter_record_path, (self.current_epoch, self.epoch_iter, self.total_steps_so_far),
-                   delimiter=',', fmt='%d')
-        print('Saved current iteration count at %s.' % self.iter_record_path)
+        np.savetxt(
+            self.iter_record_path,
+            (self.current_epoch, self.epoch_iter, self.total_steps_so_far),
+            delimiter=",",
+            fmt="%d",
+        )
+        print("Saved current iteration count at %s." % self.iter_record_path)
 
     def needs_saving(self):
-        return (self.total_steps_so_far % self.opt.save_latest_freq) < self.opt.batchSize
+        return (
+            self.total_steps_so_far % self.opt.save_latest_freq
+        ) < self.opt.batchSize
 
     def needs_printing(self):
         return (self.total_steps_so_far % self.opt.print_freq) < self.opt.batchSize

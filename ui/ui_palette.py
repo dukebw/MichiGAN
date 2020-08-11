@@ -20,7 +20,9 @@ class GUIPalette(QWidget):
 
     def set_colors(self, colors):
         if colors is not None:
-            self.colors = (colors[:min(colors.shape[0], self.num_colors), :] * 255).astype(np.uint8)
+            self.colors = (
+                colors[: min(colors.shape[0], self.num_colors), :] * 255
+            ).astype(np.uint8)
             self.color_id = -1
             self.update()
 
@@ -42,7 +44,9 @@ class GUIPalette(QWidget):
                 if n == self.color_id:
                     painter.drawEllipse(x, y, self.color_width, self.color_width)
                 else:
-                    painter.drawRoundedRect(x, y, self.color_width, self.color_width, 2, 2)
+                    painter.drawRoundedRect(
+                        x, y, self.color_width, self.color_width, 2, 2
+                    )
 
         painter.end()
 
@@ -71,9 +75,9 @@ class GUIPalette(QWidget):
         self.color_id = int(color_id)
         self.update()
         if color_id >= 0:
-            print('choose color (%d) type (%s)' % (color_id, type(color_id)))
+            print("choose color (%d) type (%s)" % (color_id, type(color_id)))
             color = self.colors[color_id]
-            self.emit(SIGNAL('update_color'), color)
+            self.emit(SIGNAL("update_color"), color)
             self.update()
 
     def mousePressEvent(self, event):

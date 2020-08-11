@@ -24,7 +24,7 @@ class SPADEResnetBlock(nn.Module):
     def __init__(self, fin, fout, opt):
         super().__init__()
         # Attributes
-        self.learned_shortcut = (fin != fout)
+        self.learned_shortcut = fin != fout
         fmiddle = min(fin, fout)
 
         # create conv layers
@@ -35,7 +35,7 @@ class SPADEResnetBlock(nn.Module):
 
         if opt.weight_norm_G == False:
             # apply spectral norm if specified
-            if 'spectral' in opt.norm_G:
+            if "spectral" in opt.norm_G:
                 self.conv_0 = spectral_norm(self.conv_0)
                 self.conv_1 = spectral_norm(self.conv_1)
                 if self.learned_shortcut:
@@ -55,8 +55,13 @@ class SPADEResnetBlock(nn.Module):
                     self.conv_s = weight_norm_1(self.conv_s)
 
         # define normalization layers
-        norm_nc = opt.label_nc + (opt.orient_nc if not opt.no_orientation else 0) + (opt.feat_num if opt.use_instance_feat else 0) + (3 if 'spadebase' in opt.netG else 0)
-        spade_config_str = opt.norm_G.replace('spectral', '')
+        norm_nc = (
+            opt.label_nc
+            + (opt.orient_nc if not opt.no_orientation else 0)
+            + (opt.feat_num if opt.use_instance_feat else 0)
+            + (3 if "spadebase" in opt.netG else 0)
+        )
+        spade_config_str = opt.norm_G.replace("spectral", "")
         self.norm_0 = SPADE(spade_config_str, fin, norm_nc, opt.weight_norm_G)
         self.norm_1 = SPADE(spade_config_str, fmiddle, norm_nc, opt.weight_norm_G)
         if self.learned_shortcut:
@@ -84,12 +89,13 @@ class SPADEResnetBlock(nn.Module):
     def actvn(self, x):
         return F.leaky_relu(x, 2e-1)
 
+
 # MaskGAN architecture that use spade model
 class SPADEImageBlock(nn.Module):
     def __init__(self, fin, fout, opt, downsample_n):
         super().__init__()
         # Attributes
-        self.learned_shortcut = (fin != fout)
+        self.learned_shortcut = fin != fout
         fmiddle = min(fin, fout)
 
         # create conv layers
@@ -99,14 +105,14 @@ class SPADEImageBlock(nn.Module):
             self.conv_s = nn.Conv2d(fin, fout, kernel_size=1, bias=False)
 
         # apply spectral norm if specified
-        if 'spectral' in opt.norm_G:
+        if "spectral" in opt.norm_G:
             self.conv_0 = spectral_norm(self.conv_0)
             self.conv_1 = spectral_norm(self.conv_1)
             if self.learned_shortcut:
                 self.conv_s = spectral_norm(self.conv_s)
 
         # define normalization layers
-        spade_config_str = opt.norm_G.replace('spectral', '')
+        spade_config_str = opt.norm_G.replace("spectral", "")
         self.norm_0 = SPADEImage(spade_config_str, fin, 3, downsample_n)
         self.norm_1 = SPADEImage(spade_config_str, fmiddle, 3, downsample_n)
         if self.learned_shortcut:
@@ -147,7 +153,7 @@ class ResnetBlock(nn.Module):
             norm_layer(nn.Conv2d(dim, dim, kernel_size=kernel_size)),
             activation,
             nn.ReflectionPad2d(pw),
-            norm_layer(nn.Conv2d(dim, dim, kernel_size=kernel_size))
+            norm_layer(nn.Conv2d(dim, dim, kernel_size=kernel_size)),
         )
 
     def forward(self, x):
@@ -188,5 +194,3 @@ class VGG19(torch.nn.Module):
         h_relu5 = self.slice5(h_relu4)
         out = [h_relu1, h_relu2, h_relu3, h_relu4, h_relu5]
         return out
-
-

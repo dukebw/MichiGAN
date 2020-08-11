@@ -5,24 +5,25 @@ import numpy as np
 import sys
 import os
 
+
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
 
         # for graph
-        self.graphicsView = QGraphicsView(Form) # tag_mask
+        self.graphicsView = QGraphicsView(Form)  # tag_mask
         self.graphicsView.setObjectName("graphicsView")
         self.graphicsView.setFixedSize(512, 512)
-        self.graphicsView_2 = QGraphicsView(Form) # orient map
+        self.graphicsView_2 = QGraphicsView(Form)  # orient map
         self.graphicsView_2.setObjectName("graphicsView_2")
         self.graphicsView_2.setFixedSize(512, 512)
-        self.graphicsView_3 = QGraphicsView(Form) # result
+        self.graphicsView_3 = QGraphicsView(Form)  # result
         self.graphicsView_3.setObjectName("graphicsView_3")
         self.graphicsView_3.setFixedSize(512, 512)
-        self.graphicsView_4 = QGraphicsView(Form) # tag image
+        self.graphicsView_4 = QGraphicsView(Form)  # tag image
         self.graphicsView_4.setFixedSize(256, 256)
         self.graphicsView_4.setObjectName("graphicsView_4")
-        self.graphicsView_5 = QGraphicsView(Form) # ref image
+        self.graphicsView_5 = QGraphicsView(Form)  # ref image
         self.graphicsView_5.setFixedSize(256, 256)
         self.graphicsView_5.setObjectName("graphicsView_5")
 
@@ -124,57 +125,56 @@ class Ui_Form(object):
         # self.pushButton_15.clicked.connect(Form.erase_mode)
 
         self.grid2 = QGridLayout()
-        self.grid2.addWidget(self.pushButton0,0,1,1,1)
-        self.grid2.addWidget(self.pushButton,0,0,1,1)
-        self.grid2.addWidget(self.pushButton_2,1,0,1,1)
-        self.grid2.addWidget(self.pushButton_3,1,1,1,1)
+        self.grid2.addWidget(self.pushButton0, 0, 1, 1, 1)
+        self.grid2.addWidget(self.pushButton, 0, 0, 1, 1)
+        self.grid2.addWidget(self.pushButton_2, 1, 0, 1, 1)
+        self.grid2.addWidget(self.pushButton_3, 1, 1, 1, 1)
         # self.grid2.addWidget(self.pushButton_4)
         # self.grid2.addWidget(self.pushButton_5)
 
         self.grid3 = QGridLayout()
-        self.grid3.addWidget(self.pushButton_4,0,0,1,1)
-        self.grid3.addWidget(self.pushButton_6,0,1,1,1)
-        self.grid3.addWidget(self.pushButton_7,1,1,1,1)
-        self.grid3.addWidget(self.pushButton_8,0,2,1,1)
-        self.grid3.addWidget(self.pushButton_9,1,2,1,1)
-        self.grid3.addWidget(self.pushButton_10,1,0,1,1)
+        self.grid3.addWidget(self.pushButton_4, 0, 0, 1, 1)
+        self.grid3.addWidget(self.pushButton_6, 0, 1, 1, 1)
+        self.grid3.addWidget(self.pushButton_7, 1, 1, 1, 1)
+        self.grid3.addWidget(self.pushButton_8, 0, 2, 1, 1)
+        self.grid3.addWidget(self.pushButton_9, 1, 2, 1, 1)
+        self.grid3.addWidget(self.pushButton_10, 1, 0, 1, 1)
 
         self.grid4 = QGridLayout()
-        self.grid4.addWidget(self.pushButton_5,0,0,1,1)
-        self.grid4.addWidget(self.pushButton_11,0,1,1,1)
+        self.grid4.addWidget(self.pushButton_5, 0, 0, 1, 1)
+        self.grid4.addWidget(self.pushButton_11, 0, 1, 1, 1)
         # self.grid4.addWidget(self.pushButton_15)
-        self.grid4.addWidget(self.pushButton_13,1,0,1,1)
-        self.grid4.addWidget(self.pushButton_14,1,1,1,1)
+        self.grid4.addWidget(self.pushButton_13, 1, 0, 1, 1)
+        self.grid4.addWidget(self.pushButton_14, 1, 1, 1, 1)
         # self.grid4.addWidget(self.pushButton_12)
-
 
         # for radioButton
         self.clickButtion1 = QRadioButton(Form)
-        self.clickButtion1.setText('Reference')
+        self.clickButtion1.setText("Reference")
         self.clickButtion1.setChecked(True)
         # self.clickButtion1.clicked.connect(Form.selectM)
         self.clickButtion2 = QRadioButton(Form)
-        self.clickButtion2.setText('Edited')
+        self.clickButtion2.setText("Edited")
         # self.clickButtion2.clicked.connect(Form.selectM)
 
         self.grid6 = QHBoxLayout()
         self.grid6_1 = QGridLayout()
-        self.grid6_1.addWidget(self.clickButtion1,0,0,1,1)
-        self.grid6_1.addWidget(self.clickButtion2,1,0,1,1)
-        self.grid6.addLayout(self.AddLayout(self.grid6_1, 'Hair Mask'))
+        self.grid6_1.addWidget(self.clickButtion1, 0, 0, 1, 1)
+        self.grid6_1.addWidget(self.clickButtion2, 1, 0, 1, 1)
+        self.grid6.addLayout(self.AddLayout(self.grid6_1, "Hair Mask"))
 
         self.clickButtion3 = QRadioButton(Form)
-        self.clickButtion3.setText('Reference')
+        self.clickButtion3.setText("Reference")
         self.clickButtion3.setChecked(True)
         # self.clickButtion3.clicked.connect(Form.selectO)
         self.clickButtion4 = QRadioButton(Form)
-        self.clickButtion4.setText('Edited')
+        self.clickButtion4.setText("Edited")
         # self.clickButtion4.clicked.connect(Form.selectO)
         self.grid6_2 = QGridLayout()
-        self.grid6_2.addWidget(self.clickButtion3,0,0,1,1)
-        self.grid6_2.addWidget(self.clickButtion4,1,0,1,1)
+        self.grid6_2.addWidget(self.clickButtion3, 0, 0, 1, 1)
+        self.grid6_2.addWidget(self.clickButtion4, 1, 0, 1, 1)
 
-        self.grid6.addLayout(self.AddLayout(self.grid6_2, 'Hair Orientation'))
+        self.grid6.addLayout(self.AddLayout(self.grid6_2, "Hair Orientation"))
 
         # for Layout setting
         mainLayout = QVBoxLayout()
@@ -182,24 +182,24 @@ class Ui_Form(object):
         Form.resize(1616, 808)
 
         subLayout = QHBoxLayout()
-        subLayout.addLayout(self.AddWidgt(self.graphicsView, 'Hair Mask'))
-        subLayout.addLayout(self.AddWidgt(self.graphicsView_2, 'Hair Orientation'))
-        subLayout.addLayout(self.AddWidgt(self.graphicsView_3, 'Result'))
+        subLayout.addLayout(self.AddWidgt(self.graphicsView, "Hair Mask"))
+        subLayout.addLayout(self.AddWidgt(self.graphicsView_2, "Hair Orientation"))
+        subLayout.addLayout(self.AddWidgt(self.graphicsView_3, "Result"))
 
         subLayout2_1 = QHBoxLayout()
         # subLayout2_1.addLayout(self.AddLayout(self.grid2, 'Main Buttons'))
-        subLayout2_1.addLayout(self.AddLayout(self.grid3, 'Mask Edit'))
+        subLayout2_1.addLayout(self.AddLayout(self.grid3, "Mask Edit"))
         subLayout2_2 = QVBoxLayout()
-        subLayout2_2.addLayout(self.AddLayout(self.grid6, 'State'))
+        subLayout2_2.addLayout(self.AddLayout(self.grid6, "State"))
         subLayout2_2.addLayout(subLayout2_1)
 
         subLayout2_3 = QVBoxLayout()
-        subLayout2_3.addLayout(self.AddLayout(self.grid2, 'Main Buttons'))
-        subLayout2_3.addLayout(self.AddLayout(self.grid4, 'Orient Edit'))
+        subLayout2_3.addLayout(self.AddLayout(self.grid2, "Main Buttons"))
+        subLayout2_3.addLayout(self.AddLayout(self.grid4, "Orient Edit"))
 
         subLayout2 = QHBoxLayout()
-        subLayout2.addLayout(self.AddWidgt(self.graphicsView_4, 'Tagert Image'))
-        subLayout2.addLayout(self.AddWidgt(self.graphicsView_5, 'Reference Image'))
+        subLayout2.addLayout(self.AddWidgt(self.graphicsView_4, "Tagert Image"))
+        subLayout2.addLayout(self.AddWidgt(self.graphicsView_5, "Reference Image"))
         subLayout2.addLayout(subLayout2_2)
         subLayout2.addLayout(subLayout2_3)
 
@@ -213,10 +213,10 @@ class Ui_Form(object):
         button.setIcon(icon)
         # button.setIconSize(W,H)
 
-    def AddLayout(self, widget, title=''):
+    def AddLayout(self, widget, title=""):
         widgetLayout = QVBoxLayout()
         widgetBox = QGroupBox()
-        if title != '':
+        if title != "":
             widgetBox.setTitle(title)
         widgetBox.setAlignment(Qt.AlignCenter)
         widgetBox.setLayout(widget)
@@ -224,25 +224,23 @@ class Ui_Form(object):
 
         return widgetLayout
 
-
     def AddWidgt(self, widget, title):
         widgetLayout = QVBoxLayout()
         widgetBox = QGroupBox()
         widgetBox.setTitle(title)
         widgetBox.setAlignment(Qt.AlignCenter)
         vbox_t = QGridLayout()
-        vbox_t.addWidget(widget,0,0,1,1)
+        vbox_t.addWidget(widget, 0, 0, 1, 1)
         widgetBox.setLayout(vbox_t)
         widgetLayout.addWidget(widgetBox)
 
         return widgetLayout
 
 
-if __name__=="__main__":
-    app=QApplication(sys.argv)
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
     Form = QWidget()
     ui = Ui_Form()
     ui.setupUi(Form)
     Form.show()
     sys.exit(app.exec_())
-
